@@ -4,9 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rimraf tsc && tsc"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/module-alias": "^2.0.1",
+    "@types/node": "^16.3.3",
+    "module-alias": "^2.2.2",
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  }
 }

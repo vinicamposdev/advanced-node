@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 16",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDirs": ["src", "tests"],
+    "target": "es2021",
+    "sourceMap": true,
+    "skipLibCheck":true,
+    "forceConsistentCasingInFileNames":true,
+    "module": "CommonJS",
+    "moduleResolution": "node", 
+    "esModuleInterop": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/tests/*": ["../tests/*"],
+      "@/*": ["*"]
+    }, 
+    "strict": true
+  },
+	"include": ["src", "tests"],
+  "exclude": []
+}
