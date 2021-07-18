@@ -1,4 +1,4 @@
-import { AccessToken } from '@/data/services'
+import { AccessToken } from '@/domain/models'
 
 describe('AccessToken', () => {
   it('should create with a value', async () => {
