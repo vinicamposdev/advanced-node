@@ -6,4 +6,8 @@ describe('AccessToken', () => {
 
     expect(sut).toEqual({ value: 'any_value' })
   })
+
+  it('should exoire in 1.800.000 ms', async () => {
+    expect(AccessToken.expirationInMs).toBe(1800000)
+  })
 })
