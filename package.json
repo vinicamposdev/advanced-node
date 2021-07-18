@@ -11,7 +11,8 @@
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:watch": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
-    "test:coverage": "npm test -- --coverage"
+    "test:coverage": "npm test -- --coverage",
+    "test:coveralls": "npm run test:coverage && coveralls < coverage/lcov.info"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +31,7 @@
     "@types/jest": "^26.0.24",
     "@types/jsonwebtoken": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "coveralls": "^3.1.1",
     "eslint": "^7.30.0",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "eslint-plugin-import": "^2.23.4",
