@@ -6,25 +6,40 @@ import { getRepository, Repository, getConnection } from 'typeorm'
 import { makeFakeDb } from '@/tests/infra/postgres/mocks'
 
 describe('PgUserAccountRepository', () => {
+  let sut: PgUserAccountRepository
+  let pgUserRepo: Repository<PgUser>
+  let backup: IBackup
+  beforeAll(async () => {
+    const db = await makeFakeDb()
+    backup = db.backup()
+    pgUserRepo = getRepository(PgUser)
+  })
+
+  beforeEach(async () => {
+    backup.restore()
+    sut = new PgUserAccountRepository()
+  })
+
+  afterAll(async () => {
+    await getConnection().close()
+  })
   describe('load()', () => {
-    let sut: PgUserAccountRepository
-    let pgUserRepo: Repository<PgUser>
-    let backup: IBackup
-    beforeAll(async () => {
-      const db = await makeFakeDb()
-      backup = db.backup()
-      pgUserRepo = getRepository(PgUser)
+    it('should return an account if email exists', async () => {
+      await pgUserRepo.save({ email: 'any_email' })
+
+      const account = await sut.load({ email: 'any_email' })
+
+      expect(account).toEqual({ id: '1' })
     })
 
-    beforeEach(async () => {
-      backup.restore()
-      sut = new PgUserAccountRepository()
-    })
+    it('should return undefined if email does not exists', async () => {
+      const account = await sut.load({ email: 'any_email' })
 
-    afterAll(async () => {
-      await getConnection().close()
+      expect(account).toBeUndefined()
     })
+  })
 
+  describe('save()', () => {
     it('should return an account if email exists', async () => {
       await pgUserRepo.save({ email: 'any_email' })
 
