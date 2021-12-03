@@ -1,15 +1,19 @@
 import { AxiosHttpClient, FacebookApi } from '@/infra/apis'
 import { env } from '@/main/config/env'
 
-describe('', () => {
-  it('should return a Facebook User if token is valid', async () => {
-    const axiosClient = new AxiosHttpClient()
-    const sut = new FacebookApi(
+describe('Facebook Api Integration Test', () => {
+  let axiosClient: AxiosHttpClient
+  let sut: FacebookApi
+  beforeEach(() => {
+    axiosClient = new AxiosHttpClient()
+    sut = new FacebookApi(
       axiosClient,
       env.facebookApi.clientId,
       env.facebookApi.clientSecret
     )
+  })
 
+  it('should return a Facebook User if token is valid', async () => {
     // this access token is obtained from https://developers.facebook.com/apps/{AppId}/roles/test-users/
     // then go on options of the user test and click in get access token from user
     // this will be valid for 3 months from 12/03/2021
@@ -23,16 +27,6 @@ describe('', () => {
   })
 
   it('should return undefined if token is invalid', async () => {
-    const axiosClient = new AxiosHttpClient()
-    const sut = new FacebookApi(
-      axiosClient,
-      env.facebookApi.clientId,
-      env.facebookApi.clientSecret
-    )
-
-    // this access token is obtained from https://developers.facebook.com/apps/{AppId}/roles/test-users/
-    // then go on options of the user test and click in get access token from user
-    // this will be valid for 3 months from 12/03/2021
     const fbUser = await sut.loadUser({ token: 'invalid_token' })
 
     expect(fbUser).toBeUndefined()
