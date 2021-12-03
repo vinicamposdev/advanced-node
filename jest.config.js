@@ -17,5 +17,6 @@ module.exports = {
   transform: {
     '\\.ts$': 'ts-jest'
   },
+  testMatch: ['**/*.spec.ts'],
   clearMocks: true
 }
