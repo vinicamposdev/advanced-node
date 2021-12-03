@@ -1,27 +1,27 @@
-import { AuthenticationError } from '@/domain/errors'
-import { FacebookAuthentication } from '@/domain/features'
-import { AccessToken } from '@/domain/models'
-import { FacebookLoginController } from '@/application/controllers'
-import { ServerError, UnauthorizedError } from '@/application/errors'
-import { RequiredStringValidator, ValidationComposite } from '@/application/validation'
+import { ServerError } from '@/application/errors'
+import { Controller } from '@/application/controllers'
+import { ValidationComposite } from '@/application/validation'
 
-import { mock, MockProxy } from 'jest-mock-extended'
 import { mocked } from 'ts-jest/utils'
+import { HttpResponse } from '../helpers'
 
 jest.mock('@/application/validation/composite')
 
-describe('FacebookLoginController', () => {
-  let sut: FacebookLoginController
-  let facebookAuth: MockProxy<FacebookAuthentication>
-  let token: string
-  beforeAll(() => {
-    facebookAuth = mock()
-    facebookAuth.perform.mockResolvedValue(new AccessToken('any_value'))
-    token = 'any_token'
-  })
+class ControllerStub extends Controller {
+  result: HttpResponse = {
+    statusCode: 200,
+    data: 'any_data'
+  }
 
+  async perform (httpRequest: any): Promise<HttpResponse> {
+    return this.result
+  }
+}
+
+describe('Controller', () => {
+  let sut: ControllerStub
   beforeEach(() => {
-    sut = new FacebookLoginController(facebookAuth)
+    sut = new ControllerStub()
   })
 
   it('should return 400 if validation fails', async () => {
@@ -32,52 +32,30 @@ describe('FacebookLoginController', () => {
     const ValidationCompositeSpy = jest.fn().mockImplementationOnce(() => (mockedContructor))
     mocked(ValidationComposite).mockImplementationOnce(ValidationCompositeSpy)
 
-    const httpResponse = await sut.handle({ token })
+    const httpResponse = await sut.handle('any_value')
 
-    expect(ValidationComposite).toHaveBeenCalledWith([
-      new RequiredStringValidator(token, 'token')
-    ])
+    expect(ValidationComposite).toHaveBeenCalledWith([])
     expect(httpResponse).toEqual({
       statusCode: 400,
       data: error
     })
   })
 
-  it('should call FacebookAuthentication with correct params', async () => {
-    await sut.handle({ token })
-    expect(facebookAuth.perform).toHaveBeenCalledWith({ token })
-    expect(facebookAuth.perform).toHaveBeenCalledTimes(1)
-  })
+  it('should return 500 if perform throws', async () => {
+    const error = new Error('perform_error')
+    jest.spyOn(sut, 'perform').mockRejectedValueOnce(error)
 
-  it('should returns 401 if authentication fails', async () => {
-    facebookAuth.perform.mockResolvedValueOnce(new AuthenticationError())
-    const httpResponse = await sut.handle({ token })
-
-    expect(httpResponse).toEqual({
-      statusCode: 401,
-      data: new UnauthorizedError()
-    })
-  })
-
-  it('should returns 200 if authentication succeeds', async () => {
-    const httpResponse = await sut.handle({ token })
-
-    expect(httpResponse).toEqual({
-      statusCode: 200,
-      data: {
-        accessToken: 'any_value'
-      }
-    })
-  })
-
-  it('should returns 500 if authentication throws', async () => {
-    const error = new Error('infra_error')
-    facebookAuth.perform.mockRejectedValueOnce(error)
-    const httpResponse = await sut.handle({ token })
+    const httpResponse = await sut.handle('any_value')
 
     expect(httpResponse).toEqual({
       statusCode: 500,
       data: new ServerError(error)
     })
+  })
+
+  it('should return same result as perform', async () => {
+    const httpResponse = await sut.handle('any_value')
+
+    expect(httpResponse).toEqual(sut.result)
   })
 })
