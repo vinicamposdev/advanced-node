@@ -20,8 +20,8 @@ export interface SaveFacebookAccountRepository {
 export namespace SaveFacebookAccountRepository {
   export type Params = {
     id?: string
-    name: string
     email: string
+    name: string
     facebookId: string
   }
 

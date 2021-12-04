@@ -1,12 +1,17 @@
-import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/data/contracts/repositories'
-import { getRepository } from 'typeorm'
+import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/data/contracts/repos'
 import { PgUser } from '@/infra/postgres/entities'
 
-export class PgUserAccountRepository implements LoadUserAccountRepository, SaveFacebookAccountRepository {
-  private readonly pgUserRepo = getRepository(PgUser)
+import { getRepository } from 'typeorm'
 
-  async load ({ email }: LoadUserAccountRepository.Params): Promise<LoadUserAccountRepository.Result> {
-    const pgUser = await this.pgUserRepo.findOne({ email })
+type LoadParams = LoadUserAccountRepository.Params
+type LoadResult = LoadUserAccountRepository.Result
+type SaveParams = SaveFacebookAccountRepository.Params
+type SaveResult = SaveFacebookAccountRepository.Result
+
+export class PgUserAccountRepository implements LoadUserAccountRepository, SaveFacebookAccountRepository {
+  async load ({ email }: LoadParams): Promise<LoadResult> {
+    const pgUserRepo = getRepository(PgUser)
+    const pgUser = await pgUserRepo.findOne({ email })
     if (pgUser !== undefined) {
       return {
         id: pgUser.id.toString(),
@@ -15,19 +20,16 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveF
     }
   }
 
-  async saveWithFacebook ({ email, name, facebookId, id }: SaveFacebookAccountRepository.Params): Promise<SaveFacebookAccountRepository.Result> {
+  async saveWithFacebook ({ id, name, email, facebookId }: SaveParams): Promise<SaveResult> {
+    const pgUserRepo = getRepository(PgUser)
+    let resultId: string
     if (id === undefined) {
-      const pgUser = await this.pgUserRepo.save({
-        email,
-        name,
-        facebookId
-      })
-      return { id: pgUser.id.toString() }
+      const pgUser = await pgUserRepo.save({ email, name, facebookId })
+      resultId = pgUser.id.toString()
+    } else {
+      resultId = id
+      await pgUserRepo.update({ id: parseInt(id) }, { name, facebookId })
     }
-    await this.pgUserRepo.update(id, {
-      name,
-      facebookId
-    })
-    return { id }
+    return { id: resultId }
   }
 }

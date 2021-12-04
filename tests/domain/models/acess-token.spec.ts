@@ -1,13 +1,13 @@
 import { AccessToken } from '@/domain/models'
 
 describe('AccessToken', () => {
-  it('should create with a value', async () => {
+  it('should create with a value', () => {
     const sut = new AccessToken('any_value')
 
     expect(sut).toEqual({ value: 'any_value' })
   })
 
-  it('should exoire in 1.800.000 ms', async () => {
+  it('should expire in 1800000 ms', () => {
     expect(AccessToken.expirationInMs).toBe(1800000)
   })
 })

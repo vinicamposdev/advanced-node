@@ -1,9 +1,9 @@
 import { Controller } from '@/application/controllers'
+import { adaptExpressRoute } from '@/infra/http'
 
-import { Request, Response, RequestHandler, NextFunction } from 'express'
+import { Request, RequestHandler, Response, NextFunction } from 'express'
 import { getMockReq, getMockRes } from '@jest-mock/express'
 import { mock, MockProxy } from 'jest-mock-extended'
-import { adaptExpressRoute } from '@/infra/http'
 
 describe('ExpressRouter', () => {
   let req: Request
@@ -11,6 +11,7 @@ describe('ExpressRouter', () => {
   let next: NextFunction
   let controller: MockProxy<Controller>
   let sut: RequestHandler
+
   beforeEach(() => {
     req = getMockReq({ body: { any: 'any' } })
     res = getMockRes().res
@@ -22,10 +23,20 @@ describe('ExpressRouter', () => {
     })
     sut = adaptExpressRoute(controller)
   })
+
   it('should call handle with correct request', async () => {
     await sut(req, res, next)
 
     expect(controller.handle).toHaveBeenCalledWith({ any: 'any' })
+    expect(controller.handle).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call handle with empty request', async () => {
+    const req = getMockReq()
+
+    await sut(req, res, next)
+
+    expect(controller.handle).toHaveBeenCalledWith({})
     expect(controller.handle).toHaveBeenCalledTimes(1)
   })
 
@@ -38,7 +49,7 @@ describe('ExpressRouter', () => {
     expect(res.json).toHaveBeenCalledTimes(1)
   })
 
-  it('should respond with error status if ocuurr any error', async () => {
+  it('should respond with 400 and valid error', async () => {
     controller.handle.mockResolvedValueOnce({
       statusCode: 400,
       data: new Error('any_error')
@@ -47,6 +58,20 @@ describe('ExpressRouter', () => {
     await sut(req, res, next)
 
     expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.status).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledWith({ error: 'any_error' })
+    expect(res.json).toHaveBeenCalledTimes(1)
+  })
+
+  it('should respond with 500 and valid error', async () => {
+    controller.handle.mockResolvedValueOnce({
+      statusCode: 500,
+      data: new Error('any_error')
+    })
+
+    await sut(req, res, next)
+
+    expect(res.status).toHaveBeenCalledWith(500)
     expect(res.status).toHaveBeenCalledTimes(1)
     expect(res.json).toHaveBeenCalledWith({ error: 'any_error' })
     expect(res.json).toHaveBeenCalledTimes(1)

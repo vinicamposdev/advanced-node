@@ -1,4 +1,3 @@
-
 export interface TokenGenerator {
   generateToken: (params: TokenGenerator.Params) => Promise<TokenGenerator.Result>
 }

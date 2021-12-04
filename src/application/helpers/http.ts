@@ -5,7 +5,7 @@ export type HttpResponse<T = any> = {
   data: T
 }
 
-export const ok = <T = any>(data: T): HttpResponse<T> => ({
+export const ok = <T = any> (data: T): HttpResponse<T> => ({
   statusCode: 200,
   data
 })
@@ -20,7 +20,7 @@ export const unauthorized = (): HttpResponse<Error> => ({
   data: new UnauthorizedError()
 })
 
-export const serverError = (error?: Error | unknown): HttpResponse<Error> => ({
+export const serverError = (error: Error): HttpResponse<Error> => ({
   statusCode: 500,
-  data: new ServerError(error instanceof Error ? error : undefined)
+  data: new ServerError(error)
 })

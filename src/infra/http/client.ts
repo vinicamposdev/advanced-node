@@ -7,6 +7,4 @@ export namespace HttpGetClient {
     url: string
     params: object
   }
-
-  export type Result = any
 }
