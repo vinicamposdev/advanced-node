@@ -8,7 +8,7 @@ import { AccessToken, FacebookAccount } from '@/domain/entities'
 type Params = FacebookAuthentication.Params
 type Result = FacebookAuthentication.Result
 
-export class FacebookAuthenticationService implements FacebookAuthentication {
+export class FacebookAuthenticationUseCase implements FacebookAuthentication {
   constructor (
     private readonly facebookApi: LoadFacebookUserApi,
     private readonly userAccountRepo: LoadUserAccountRepository & SaveFacebookAccountRepository,
