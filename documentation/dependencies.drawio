@@ -195,7 +195,7 @@
                 <mxCell id="171" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#8BE9FD;strokeWidth=3;" parent="1" source="168" target="170" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="168" value="JwtTokenGenerator" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#8BE9FD;fillColor=#2E303D;strokeWidth=3;fontColor=#F8F8F2;" parent="1" vertex="1">
+                <mxCell id="168" value="JwtTokenHandler" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#8BE9FD;fillColor=#2E303D;strokeWidth=3;fontColor=#F8F8F2;" parent="1" vertex="1">
                     <mxGeometry x="-355.5" y="214" width="125" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="170" value="JsonWebToken" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#FF5555;fillColor=#2E303D;strokeWidth=3;fontColor=#F8F8F2;" parent="1" vertex="1">
